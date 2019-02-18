@@ -192,7 +192,7 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
     private parseFacetItems(context: ResultSetContext, configFacetFields, itemType): FacetField[] {
         return configFacetFields.map((field) => {
             const responseField = (context.facets || []).find((response) => response.type === itemType && response.label === field.label) || {};
-            const responseBuckets = this.getResponseBuckets(responseField)
+            const responseBuckets = this.getResponseBuckets(responseField, field)
                 .filter(this.getFilterByMinCount(field.mincount));
 
             const bucketList = new SearchFilterList<FacetFieldBucket>(responseBuckets, field.pageSize);
@@ -270,10 +270,11 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    private getResponseBuckets(responseField: GenericFacetResponse): FacetFieldBucket[] {
+    private getResponseBuckets(responseField: GenericFacetResponse, configField): FacetFieldBucket[] {
         return ((responseField && responseField.buckets) || []).map((respBucket) => {
 
             respBucket['count'] = this.getCountValue(respBucket);
+            respBucket.filterQuery = respBucket.filterQuery || this.getCorrespondingFilterQuery(configField, respBucket.label);
             return <FacetFieldBucket> {
                 ...respBucket,
                 checked: false,
@@ -311,5 +312,34 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
             }
             return bucket.count >= mincount;
         };
+    }
+
+    // remove once [SEARCH-1487] issue is fixed
+    private getCorrespondingFilterQuery (field, bucketLabel: string): string {
+        if (!field.field || !bucketLabel) {
+            return null;
+        }
+
+        if (!field.sets) {
+            return `${field.field}:"${bucketLabel}"`;
+
+        } else {
+            const configSet = field.sets.find((set) => bucketLabel === set.label);
+
+            if (configSet) {
+                return this.buildIntervalQuery(field.field, configSet);
+            }
+        }
+
+        return null;
+    }
+
+    private buildIntervalQuery(fieldName, interval): string {
+        const start = interval.start;
+        const end = interval.end;
+        const startLimit = (interval.startInclusive === undefined || interval.startInclusive === true) ? '[' : '<';
+        const endLimit = (interval.endInclusive === undefined || interval.endInclusive === true) ? ']' : '>';
+
+        return `${fieldName}:${startLimit}"${start}" TO "${end}"${endLimit}`;
     }
 }

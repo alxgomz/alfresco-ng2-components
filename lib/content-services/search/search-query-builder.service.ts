@@ -322,7 +322,7 @@ export class SearchQueryBuilderService {
 
             return {
                 intervals: configIntervals.intervals.map((interval) => <any> {
-                    label: interval.label,
+                    label: this.getSupportedLabel(interval.label),
                     field: interval.field,
                     sets: interval.sets
                 })
@@ -374,7 +374,7 @@ export class SearchQueryBuilderService {
                 facets: facetFields.map((facet) => <RequestFacetField> {
                     field: facet.field,
                     mincount: facet.mincount,
-                    label: facet.label,
+                    label: this.getSupportedLabel(facet.label),
                     limit: facet.limit,
                     offset: facet.offset,
                     prefix: facet.prefix
@@ -383,5 +383,13 @@ export class SearchQueryBuilderService {
         }
 
         return null;
+    }
+
+    getSupportedLabel(item: string) {
+        const spaceInsideLabelIndex = item.search(/\s/g);
+        if (spaceInsideLabelIndex > -1) {
+            return `"${item}"`;
+        }
+        return item;
     }
 }
