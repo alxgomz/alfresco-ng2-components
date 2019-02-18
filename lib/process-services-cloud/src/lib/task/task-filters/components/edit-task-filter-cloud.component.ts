@@ -448,20 +448,6 @@ export class EditTaskFilterCloudComponent implements OnChanges {
                 value: currentTaskFilter.assignee || ''
             }),
             new TaskFilterProperties({
-                label: 'ADF_CLOUD_EDIT_TASK_FILTER.LABEL.SORT',
-                type: 'select',
-                key: 'sort',
-                value: currentTaskFilter.sort || this.createSortProperties[0].value,
-                options: this.createSortProperties()
-            }),
-            new TaskFilterProperties({
-                label: 'ADF_CLOUD_EDIT_TASK_FILTER.LABEL.DIRECTION',
-                type: 'select',
-                key: 'order',
-                value: currentTaskFilter.order || this.directions[0].value,
-                options: this.directions
-            }),
-            new TaskFilterProperties({
                 label: 'ADF_CLOUD_EDIT_TASK_FILTER.LABEL.PROCESS_INSTANCE_ID',
                 type: 'text',
                 key: 'processInstanceId',
@@ -508,6 +494,20 @@ export class EditTaskFilterCloudComponent implements OnChanges {
                 type: 'date',
                 key: 'dueDate',
                 value: ''
+            }),
+            new TaskFilterProperties({
+                label: 'ADF_CLOUD_EDIT_TASK_FILTER.LABEL.SORT',
+                type: 'select',
+                key: 'sort',
+                value: currentTaskFilter.sort || this.createSortProperties[0].value,
+                options: this.createSortProperties()
+            }),
+            new TaskFilterProperties({
+                label: 'ADF_CLOUD_EDIT_TASK_FILTER.LABEL.DIRECTION',
+                type: 'select',
+                key: 'order',
+                value: currentTaskFilter.order || this.directions[0].value,
+                options: this.directions
             }),
             new TaskFilterProperties({
                 label: 'ADF_CLOUD_EDIT_TASK_FILTER.LABEL.STAND_ALONE',
