@@ -31,6 +31,7 @@ import { EditTaskFilterCloudComponent } from './edit-task-filter-cloud.component
 import { TaskFilterCloudService } from '../services/task-filter-cloud.service';
 import { TaskFilterDialogCloudComponent } from './task-filter-dialog-cloud.component';
 import { fakeFilter } from '../mock/task-filters-cloud.mock';
+import { TaskFilterPropertiesList } from '../models/filter-cloud.model';
 
 describe('EditTaskFilterCloudComponent', () => {
     let component: EditTaskFilterCloudComponent;
@@ -243,7 +244,11 @@ describe('EditTaskFilterCloudComponent', () => {
         }));
 
         it('should able to fetch running applications when appName property defined in the input', async(() => {
-            component.filterProperties = ['appName', 'processInstanceId', 'priority'];
+            component.filterProperties = [
+                TaskFilterPropertiesList.appName,
+                TaskFilterPropertiesList.processInstanceId,
+                TaskFilterPropertiesList.priority
+            ];
             fixture.detectChanges();
             let taskFilterIDchange = new SimpleChange(undefined, 'mock-task-filter-id', true);
             component.ngOnChanges({ 'id': taskFilterIDchange});

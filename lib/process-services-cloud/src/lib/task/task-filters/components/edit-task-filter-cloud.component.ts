@@ -17,7 +17,7 @@
 
 import { Component, OnChanges, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormGroup, FormBuilder } from '@angular/forms';
-import { TaskFilterCloudModel, TaskFilterProperties, FilterOptions, TaskFilterAction } from './../models/filter-cloud.model';
+import { TaskFilterCloudModel, TaskFilterProperties, FilterOptions, TaskFilterAction, TaskFilterPropertiesList } from './../models/filter-cloud.model';
 import { TaskFilterCloudService } from '../services/task-filter-cloud.service';
 import { MatDialog } from '@angular/material';
 import { TaskFilterDialogCloudComponent } from './task-filter-dialog-cloud.component';
@@ -43,10 +43,15 @@ export class EditTaskFilterCloudComponent implements OnChanges {
     public static LAST_MODIFIED: string = 'lastModified';
     public static SORT: string = 'sort';
     public static ORDER: string = 'order';
-    public static DEFAULT_TASK_FILTER_PROPERTIES = ['status', 'assignee', 'sort', 'order'];
     public static DEFAULT_SORT_PROPERTIES = ['id', 'name', 'createdDate', 'priority'];
     public static DEFAULT_ACTIONS = ['save', 'saveAs', 'delete'];
     public FORMAT_DATE: string = 'DD/MM/YYYY';
+    public DEFAULT_TASK_FILTER_PROPERTIES: TaskFilterPropertiesList[] = [
+        TaskFilterPropertiesList.assignee,
+        TaskFilterPropertiesList.order,
+        TaskFilterPropertiesList.sort,
+        TaskFilterPropertiesList.status
+    ];
 
     /** (required) Name of the app. */
     @Input()
@@ -58,7 +63,7 @@ export class EditTaskFilterCloudComponent implements OnChanges {
 
     /** List of task filter properties to display. */
     @Input()
-    filterProperties: string[] = EditTaskFilterCloudComponent.DEFAULT_TASK_FILTER_PROPERTIES;
+    filterProperties: TaskFilterPropertiesList[] = this.DEFAULT_TASK_FILTER_PROPERTIES;
 
     /** List of sort properties to display. */
     @Input()
@@ -182,20 +187,21 @@ export class EditTaskFilterCloudComponent implements OnChanges {
 
     checkMandatoryFilterProperties() {
         if (this.filterProperties === undefined || this.filterProperties.length === 0) {
-            this.filterProperties = EditTaskFilterCloudComponent.DEFAULT_TASK_FILTER_PROPERTIES;
+            this.filterProperties = this.DEFAULT_TASK_FILTER_PROPERTIES;
         }
     }
 
-    private isValidProperty(filterProperties: string[], filterProperty: any): boolean {
-        return filterProperties ? filterProperties.indexOf(filterProperty.key) >= 0 : true;
+    private isValidProperty(filterProperties: TaskFilterPropertiesList[], filterProperty: any): boolean {
+        return filterProperties.includes(filterProperty.key);
     }
 
     checkForApplicationNameProperty(): boolean {
-        return this.filterProperties ? this.filterProperties.indexOf(EditTaskFilterCloudComponent.APPLICATION_NAME) >= 0 : false;
+        const appName = EditTaskFilterCloudComponent.APPLICATION_NAME;
+        return this.filterProperties.includes(<any> appName);
     }
 
     hasSortProperty(): boolean {
-        return this.filterProperties.indexOf(EditTaskFilterCloudComponent.SORT) >= 0;
+        return this.filterProperties[EditTaskFilterCloudComponent.SORT];
     }
 
     removeOrderProperty(filteredProperties: TaskFilterProperties[]) {
@@ -206,7 +212,7 @@ export class EditTaskFilterCloudComponent implements OnChanges {
     }
 
     hasLastModifiedProperty(): boolean {
-        return this.filterProperties.indexOf(EditTaskFilterCloudComponent.LAST_MODIFIED) >= 0;
+        return this.filterProperties[EditTaskFilterCloudComponent.LAST_MODIFIED];
     }
 
     createSortProperties(): any {

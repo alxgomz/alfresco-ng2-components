@@ -119,3 +119,13 @@ export class TaskFilterProperties {
         }
     }
 }
+
+export enum TaskFilterPropertiesList {
+    status = 'status',
+    assignee = 'assignee',
+    sort = 'sort',
+    order = 'order',
+    appName = 'appName',
+    processInstanceId = 'processInstanceId',
+    priority = 'priority'
+}
